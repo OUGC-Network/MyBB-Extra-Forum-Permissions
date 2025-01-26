@@ -60,7 +60,6 @@ $plugins->add_hook('datahandler_post_validate_post', 'extraforumperm_validatepos
 /**
  * Info function for MyBB plugin system
  */
-function extraforumperm_info()
 function extraforumperm_info(): array
 {
     return plugin_information();
