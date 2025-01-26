@@ -37,6 +37,10 @@ if (defined('IN_ADMINCP')) {
     addHooks('ExtraForumPermissions\Hooks\Forum');
 }
 
+require_once ROOT . '/hooks/shared.php';
+
+addHooks('ExtraForumPermissions\Hooks\Shared');
+
 global $plugins;
 
 $plugins->add_hook('admin_forum_management_permission_groups', 'extraforumperm_custom_permissions');
