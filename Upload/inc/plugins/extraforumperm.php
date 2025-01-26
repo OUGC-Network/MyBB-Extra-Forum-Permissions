@@ -55,7 +55,7 @@ $plugins->add_hook('newthread_end', 'extraforumperm_newthreadmoderation');
 $plugins->add_hook('moderation_start', 'extraforumperm_moderation');
 $plugins->add_hook('newreply_do_newreply_end', 'extraforumperm_save_modoptions');
 $plugins->add_hook('newthread_do_newthread_end', 'extraforumperm_save_modoptions');
-// can_post_links_in_threads, canpostlinks, canpostimages, canpostvideos
+// can_post_links_in_threads, can_post_links, canpostimages, canpostvideos
 $plugins->add_hook('datahandler_post_validate_thread', 'extraforumperm_validatepost');
 $plugins->add_hook('datahandler_post_validate_post', 'extraforumperm_validatepost');
 
@@ -584,7 +584,8 @@ function extraforumperm_validatepost(&$datahandler)
 
     $is_post = !$is_thread;
 
-    if ($is_thread && !$forumpermissions['can_post_links_in_threads'] || $is_post && !$forumpermissions['canpostlinks']) {
+    if ($is_thread && empty($forumpermissions['can_post_links_in_threads']) ||
+        $is_post && empty($forumpermissions['can_post_links'])) {
         $http_links = "#([\>\s\(\)])(http|https|ftp|news){1}://([^\/\"\s\<\[\.]+\.([^\/\"\s\<\[\.]+\.)*[\w]+(:[0-9]+)?(/[^\"\s<\[]*)?)#i";
         $www_links = "#([\>\s\(\)])(www|ftp)\.(([^\/\"\s\<\[\.]+\.)*[\w]+(:[0-9]+)?(/[^\"\s<\[]*)?)#i";
         $url_tags_simple = "#\[url\]([a-z]+?://)([^\r\n\"<]+?)\[/url\]#si";

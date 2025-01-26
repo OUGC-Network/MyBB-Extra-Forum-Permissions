@@ -37,7 +37,7 @@ const FIELDS_DATA = [
             'default' => 1,
             'form_type' => 'check_box',
         ],
-        'canpostlinks' => [
+        'can_post_links' => [
             'type' => 'TINYINT',
             'unsigned' => true,
             'default' => 1,
@@ -91,7 +91,7 @@ const FIELDS_DATA = [
             'default' => 1,
             'form_type' => 'check_box',
         ],
-        'canpostlinks' => [
+        'can_post_links' => [
             'type' => 'TINYINT',
             'unsigned' => true,
             'default' => 1,

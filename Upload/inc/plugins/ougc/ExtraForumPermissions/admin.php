@@ -74,12 +74,30 @@ function plugin_activation(): bool
         );
     }
 
+    if ($db->field_exists('canpostlinks', 'forumpermissions')) {
+        $db->rename_column(
+            'forumpermissions',
+            'canpostlinks',
+            'can_post_links',
+            db_build_field_definition(FIELDS_DATA['forumpermissions']['can_post_links'])
+        );
+    }
+
     if ($db->field_exists('usergroups', 'forumpermissions')) {
         $db->rename_column(
             'forumpermissions',
             'canrateownthreads',
             'can_rate_own_threads',
             db_build_field_definition(FIELDS_DATA['forumpermissions']['can_rate_own_threads'])
+        );
+    }
+
+    if ($db->field_exists('canpostlinks', 'usergroups')) {
+        $db->rename_column(
+            'usergroups',
+            'canpostlinks',
+            'can_post_links',
+            db_build_field_definition(FIELDS_DATA['usergroups']['can_post_links'])
         );
     }
 
