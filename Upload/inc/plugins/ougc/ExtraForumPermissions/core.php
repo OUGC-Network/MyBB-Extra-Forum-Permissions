@@ -142,6 +142,23 @@ const FIELDS_DATA = [
     ]
 ];
 
+const FIELDS_DATA_CORE = [
+    'threads' => [
+        'subject' => [
+            'type' => 'VARCHAR',
+            'size' => 255,
+            'default' => '',
+        ],
+    ],
+    'posts' => [
+        'subject' => [
+            'type' => 'VARCHAR',
+            'size' => 255,
+            'default' => '',
+        ],
+    ],
+];
+
 function load_language()
 {
     global $lang;
