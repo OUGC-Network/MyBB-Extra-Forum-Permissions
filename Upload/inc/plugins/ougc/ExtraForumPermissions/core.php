@@ -49,6 +49,12 @@ const FIELDS_DATA = [
             'default' => 1,
             'form_type' => 'check_box',
         ],
+        'can_view_links' => [
+            'type' => 'TINYINT',
+            'unsigned' => true,
+            'default' => 1,
+            'form_type' => 'check_box',
+        ],
         'canpostimages' => [
             'type' => 'TINYINT',
             'unsigned' => true,
@@ -119,6 +125,12 @@ const FIELDS_DATA = [
             'default' => 1,
             'form_type' => 'check_box',
         ],
+        'can_view_links' => [
+            'type' => 'TINYINT',
+            'unsigned' => true,
+            'default' => 1,
+            'form_type' => 'check_box',
+        ],
         'canpostimages' => [
             'type' => 'TINYINT',
             'unsigned' => true,
@@ -171,6 +183,28 @@ const FIELDS_DATA_CORE = [
     ],
 ];
 
+const REGULAR_EXPRESSIONS_URL = [
+    "#\[url\]((?!javascript)[a-z]+?://)([^\r\n\"<]+?)\[/url\]#si" => 'parser_url_callback1',
+    "#\[url\]((?!javascript:)[^\r\n\"<]+?)\[/url\]#i" => 'parser_url_callback2',
+    "#\[url=((?!javascript)[a-z]+?://)([^\r\n\"<]+?)\](.+?)\[/url\]#si" => 'parser_url_callback1',
+    "#\[url=((?!javascript:)[^\r\n\"<]+?)\](.+?)\[/url\]#si" => 'parser_url_callback2',
+    "~
+				<a\\s[^>]*>.*?</a>|								# match and return existing links
+				(?<=^|[\s\(\)\[\>])								# character preceding the link
+				(?P<prefix>
+					(?:http|https|ftp|news|irc|ircs|irc6)://|	# scheme, or
+					(?:www|ftp)\.								# common subdomain
+				)
+				(?P<link>
+					(?:[^\/\"\s\<\[\.]+\.)*[\w]+				# host
+					(?::[0-9]+)?								# port
+					(?:/(?:[^\"\s<\[&]|\[\]|&(?:amp|lt|gt);)*)?	# path, query, fragment; exclude unencoded characters
+					[\w\/\)]
+				)
+				(?![^<>]*?>)									# not followed by unopened > (within HTML tags)
+			~iusx" => 'parser_url_callback_auto',
+];
+
 function load_language()
 {
     global $lang;
@@ -178,7 +212,7 @@ function load_language()
     isset($lang->extraforumperm) || $lang->load('extraforumperm');
 }
 
-function addHooks(string $namespace)
+function add_hooks(string $namespace)
 {
     global $plugins;
 
@@ -202,4 +236,36 @@ function addHooks(string $namespace)
             $plugins->add_hook($hookName, $callable, $priority);
         }
     }
+}
+
+function parser_url_callback1($matches): string
+{
+    return parse_url();
+}
+
+function parser_url_callback2($matches): string
+{
+    return parse_url();
+}
+
+function parser_url_callback_auto($matches = array()): string
+{
+    if (count($matches) == 1) {
+        return $matches[0];
+    }
+
+    return parse_url();
+}
+
+function parse_url(): string
+{
+    global $lang, $templates;
+
+    load_language();
+
+    if (!isset($templates->cache['extra_forum_permissions_my_code_url_hidden'])) {
+        $templates->cache['extra_forum_permissions_my_code_url_hidden'] = '<span class="pm_alert">{$lang->error_hidden_link}</span>';
+    }
+
+    return eval($templates->render('extra_forum_permissions_my_code_url_hidden', true, false));
 }

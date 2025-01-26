@@ -10,6 +10,10 @@ namespace ExtraForumPermissions\Hooks\Forum;
 
 use MyBB;
 
+use PostParser;
+
+use const ExtraForumPermissions\Core\REGULAR_EXPRESSIONS_URL;
+
 function global_end(): bool
 {
     if (defined('THIS_SCRIPT') && constant('THIS_SCRIPT') === 'ratethread.php') {
@@ -130,7 +134,7 @@ function showthread_start(): bool
 {
     global $mybb;
 
-    if ($mybb->input['action'] !== "thread") {
+    if ($mybb->input['action'] !== 'thread') {
         return false;
     }
 
@@ -186,4 +190,22 @@ function editpost_end(): bool
     $extra_maximum_subject_length = (int)$forumpermissions['extra_subject_length'];
 
     return true;
+}
+
+function parse_message_me_mycode(string &$message): string
+{
+    global $parser;
+    global $forumpermissions;
+
+    if (!isset($forumpermissions['can_view_links']) ||
+        !empty($forumpermissions['can_view_links']) ||
+        !($parser instanceof PostParser)) {
+        return $message;
+    }
+
+    foreach (REGULAR_EXPRESSIONS_URL as $regular_expression => $callback) {
+        $message = preg_replace_callback($regular_expression, "\\ExtraForumPermissions\\Core\\{$callback}", $message);
+    }
+
+    return $message;
 }

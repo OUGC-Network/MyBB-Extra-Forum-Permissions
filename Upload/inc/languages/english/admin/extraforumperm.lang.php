@@ -17,6 +17,7 @@ $l['extra_field_canstickyownthreads'] = 'Can sticky own threads?';
 $l['extra_field_cancloseownthreads'] = 'Can close own threads?';
 $l['extra_field_can_post_links_in_threads'] = 'Can post links in threads?';
 $l['extra_field_can_post_links'] = 'Can post links in posts?';
+$l['extra_field_can_view_links'] = 'Can view links in threads and posts?';
 $l['extra_field_canpostimages'] = 'Can post images?';
 $l['extra_field_canpostvideos'] = 'Can post videos?';
 

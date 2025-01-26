@@ -11,7 +11,7 @@ use function ExtraForumPermissions\Admin\plugin_deactivation;
 use function ExtraForumPermissions\Admin\plugin_information;
 use function ExtraForumPermissions\Admin\plugin_is_installed;
 use function ExtraForumPermissions\Admin\plugin_uninstallation;
-use function ExtraForumPermissions\Core\addHooks;
+use function ExtraForumPermissions\Core\add_hooks;
 use function ExtraForumPermissions\Core\load_language;
 
 use const ExtraForumPermissions\Core\FIELDS_DATA;
@@ -30,16 +30,16 @@ if (defined('IN_ADMINCP')) {
 
     require_once ROOT . '/hooks/admin.php';
 
-    addHooks('ExtraForumPermissions\Hooks\Admin');
+    add_hooks('ExtraForumPermissions\Hooks\Admin');
 } else {
     require_once ROOT . '/hooks/forum.php';
 
-    addHooks('ExtraForumPermissions\Hooks\Forum');
+    add_hooks('ExtraForumPermissions\Hooks\Forum');
 }
 
 require_once ROOT . '/hooks/shared.php';
 
-addHooks('ExtraForumPermissions\Hooks\Shared');
+add_hooks('ExtraForumPermissions\Hooks\Shared');
 
 global $plugins;
 
