@@ -8,12 +8,53 @@
 
 namespace ExtraForumPermissions\Hooks\Forum;
 
+use MyBB;
+
 function global_end(): bool
 {
-    if (constant('THIS_SCRIPT') === 'ratethread.php') {
+    if (defined('THIS_SCRIPT') && constant('THIS_SCRIPT') === 'ratethread.php') {
         global $extra_rate_thread_script;
 
         $extra_rate_thread_script = true;
+    }
+
+    if (defined('THIS_SCRIPT') && in_array(constant('THIS_SCRIPT'), ['newreply.php', 'newthread.php'])) {
+        editpost_start(THIS_SCRIPT);
+    }
+
+    return true;
+}
+
+function editpost_start(string $script_name): bool
+{
+    global $mybb, $plugins;
+
+    $forum_id = $mybb->get_input('fid', MyBB::INPUT_INT);
+
+    $thread_id = $mybb->get_input('tid', MyBB::INPUT_INT);
+
+    $post_id = $mybb->get_input('pid', MyBB::INPUT_INT);
+
+    if (empty($mybb->user['uid'])) {
+        return false;
+    }
+
+    $post_data = get_post($post_id);
+
+    $thread_data = get_thread($thread_id ?? ($post_data['tid'] ?? 0));
+
+    $forum_data = get_forum($forum_id ?? ($thread_data['fid'] ?? ($post_data['fid'] ?? 0)));
+
+    $forum_id = (int)($forum_data['fid'] ?? ($thread_data['fid'] ?? ($post_data['fid'] ?? 0)));
+
+    $user_id = (int)($thread_data['uid'] ?? ($post_data['uid'] ?? ($mybb->user['uid'] ?? 0)));
+
+    if ($forum_id && $user_id) {
+        $forum_permissions = forum_permissions($forum_id, $user_id);
+
+        if (!empty($forum_permissions['extra_maximum_attachments'])) {
+            $mybb->settings['maxattachments'] = (int)$forum_permissions['extra_maximum_attachments'];
+        }
     }
 
     return true;

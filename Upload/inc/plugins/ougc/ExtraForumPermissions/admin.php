@@ -11,6 +11,7 @@ namespace ExtraForumPermissions\Admin;
 use function ExtraForumPermissions\Core\load_language;
 
 use const ExtraForumPermissions\Core\FIELDS_DATA;
+use const ExtraForumPermissions\Core\FIELDS_DATA_CORE;
 
 function plugin_information(): array
 {
@@ -65,7 +66,18 @@ function plugin_activation(): bool
 
     global $db;
 
-    if ($db->field_exists('canrateownthreads', 'forumpermissions')) {
+    foreach (FIELDS_DATA_CORE as $table_name => $table_columns) {
+        foreach ($table_columns as $field_name => $field_definition) {
+            $db->modify_column(
+                $table_name,
+                $field_name,
+                db_build_field_definition($field_definition)
+            );
+        }
+    }
+
+    if ($db->field_exists('canrateownthreads', 'forumpermissions') &&
+        !$db->field_exists('can_rate_own_threads', 'forumpermissions')) {
         $db->rename_column(
             'forumpermissions',
             'canrateownthreads',
@@ -74,7 +86,8 @@ function plugin_activation(): bool
         );
     }
 
-    if ($db->field_exists('canpostlinks', 'forumpermissions')) {
+    if ($db->field_exists('canpostlinks', 'forumpermissions') &&
+        !$db->field_exists('can_post_links', 'forumpermissions')) {
         $db->rename_column(
             'forumpermissions',
             'canpostlinks',
@@ -83,16 +96,18 @@ function plugin_activation(): bool
         );
     }
 
-    if ($db->field_exists('usergroups', 'forumpermissions')) {
+    if ($db->field_exists('canrateownthreads', 'usergroups') &&
+        !$db->field_exists('can_rate_own_threads', 'usergroups')) {
         $db->rename_column(
-            'forumpermissions',
+            'usergroups',
             'canrateownthreads',
             'can_rate_own_threads',
-            db_build_field_definition(FIELDS_DATA['forumpermissions']['can_rate_own_threads'])
+            db_build_field_definition(FIELDS_DATA['usergroups']['can_rate_own_threads'])
         );
     }
 
-    if ($db->field_exists('canpostlinks', 'usergroups')) {
+    if ($db->field_exists('canpostlinks', 'usergroups') &&
+        !$db->field_exists('can_post_links', 'usergroups')) {
         $db->rename_column(
             'usergroups',
             'canpostlinks',

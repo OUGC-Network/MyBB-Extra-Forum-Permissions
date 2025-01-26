@@ -60,11 +60,17 @@ function admin_forum_management_permissions_commit(): bool
 
     global $mybb;
 
-    $db->update_query(
-        'forumpermissions',
-        ['extra_subject_length' => (int)($mybb->input['permissions']['extra_subject_length'] ?? 0)],
-        "pid='{$pid}'"
-    );
+    $update_data = [];
+
+    foreach (FIELDS_DATA['forumpermissions'] as $field_name => $field_definition) {
+        if (empty($field_definition['form_type']) || $field_definition['form_type'] !== 'numeric') {
+            continue;
+        }
+
+        $update_data[$field_name] = (int)($mybb->input['permissions'][$field_name] ?? 0);
+    }
+
+    $db->update_query('forumpermissions', $update_data, "pid='{$pid}'");
 
     return true;
 }

@@ -507,7 +507,7 @@ function extraforumperm_save_modoptions()
 {
     global $forumpermissions, $post, $thread, $new_thread, $thread_info, $lang, $db, $mybb;
 
-    if (is_moderator($post['fid'], '', $post['uid'])) {
+    if (is_moderator($post['fid'] ?? 0, '', $post['uid'] ?? 0)) {
         // the options are already done for moderators
         return;
     }

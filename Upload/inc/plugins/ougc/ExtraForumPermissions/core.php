@@ -65,6 +65,16 @@ const FIELDS_DATA = [
                 'max' => 255
             ]
         ],
+        'extra_maximum_attachments' => [
+            'type' => 'TINYINT',
+            'unsigned' => true,
+            'default' => 0,
+            'form_type' => 'numeric',
+            'form_options' => [
+                'min' => 0,
+                'max' => 255
+            ]
+        ],
     ],
     'usergroups' => [
         'can_rate_own_threads' => [
@@ -116,6 +126,16 @@ const FIELDS_DATA = [
             'form_type' => 'numeric',
             'form_options' => [
                 'min' => 1,
+                'max' => 255
+            ]
+        ],
+        'extra_maximum_attachments' => [
+            'type' => 'TINYINT',
+            'unsigned' => true,
+            'default' => 0,
+            'form_type' => 'numeric',
+            'form_options' => [
+                'min' => 0,
                 'max' => 255
             ]
         ],
