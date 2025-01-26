@@ -63,6 +63,26 @@ function plugin_activation(): bool
 
     /*~*~* RUN UPDATES START *~*~*/
 
+    global $db;
+
+    if ($db->field_exists('canrateownthreads', 'forumpermissions')) {
+        $db->rename_column(
+            'forumpermissions',
+            'canrateownthreads',
+            'can_rate_own_threads',
+            db_build_field_definition(FIELDS_DATA['forumpermissions']['can_rate_own_threads'])
+        );
+    }
+
+    if ($db->field_exists('usergroups', 'forumpermissions')) {
+        $db->rename_column(
+            'forumpermissions',
+            'canrateownthreads',
+            'can_rate_own_threads',
+            db_build_field_definition(FIELDS_DATA['forumpermissions']['can_rate_own_threads'])
+        );
+    }
+
     /*~*~* RUN UPDATES END *~*~*/
 
     db_verify_columns();

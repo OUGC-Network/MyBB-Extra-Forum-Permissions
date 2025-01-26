@@ -10,11 +10,14 @@ namespace ExtraForumPermissions\Core;
 
 const FIELDS_DATA = [
     'forumpermissions' => [
-        'canrateownthreads' => [
+        'can_rate_own_threads' => [
             'type' => 'TINYINT',
             'unsigned' => true,
             'default' => 1,
             'form_type' => 'check_box',
+            'form_options' => [
+                'disabled_for_guest_group' => true
+            ]
         ],
         'canstickyownthreads' => [
             'type' => 'TINYINT',
@@ -64,7 +67,7 @@ const FIELDS_DATA = [
         ],
     ],
     'usergroups' => [
-        'canrateownthreads' => [
+        'can_rate_own_threads' => [
             'type' => 'TINYINT',
             'unsigned' => true,
             'default' => 1,

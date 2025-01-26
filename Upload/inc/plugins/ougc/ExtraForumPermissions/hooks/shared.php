@@ -66,13 +66,6 @@ function datahandler_post_validate_thread(PostDataHandler &$dataHandler): PostDa
         $dataHandler->set_error('subject_too_long', my_strlen($subject));
     }
 
-    _dump(
-        $forum_permissions,
-        $subject_length,
-        $dataHandler->errors['subject_too_long'],
-        $dataHandler->get_errors()
-    );
-
     return $dataHandler;
 }
 

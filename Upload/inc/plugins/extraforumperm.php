@@ -48,8 +48,6 @@ $plugins->add_hook('admin_user_groups_edit_graph_tabs', 'extraforumperm_usergrou
 $plugins->add_hook('admin_user_groups_edit_graph', 'extraforumperm_usergroup_permissions');
 $plugins->add_hook('admin_user_groups_edit_commit', 'extraforumperm_usergroup_permissions_save');
 
-// canrateownthreads
-$plugins->add_hook('ratethread_start', 'extraforumperm_canrateownthreads');
 // canstickyownthreads, cancloseownthreads
 $plugins->add_hook('showthread_end', 'extraforumperm_showthreadmoderation');
 $plugins->add_hook('newreply_end', 'extraforumperm_newreplymoderation');
@@ -108,6 +106,7 @@ function extraforumperm_deactivate()
  */
 function extraforumperm_custom_permissions(array &$groups): array
 {
+    global $hidefields;
     global $extra_forum_permissions;
 
     $extra_forum_permissions = true;
@@ -115,6 +114,14 @@ function extraforumperm_custom_permissions(array &$groups): array
     load_language();
 
     foreach (FIELDS_DATA['forumpermissions'] as $field_name => $field_definition) {
+        if (!empty($field_definition['form_options']) && !empty($field_definition['form_options']['disabled_for_guest_group'])) {
+            global $usergroup;
+
+            if ((int)$usergroup['gid'] === 1) {
+                $hidefields[] = $field_name;
+            }
+        }
+
         $groups[$field_name] = 'extra';
     }
 
@@ -192,20 +199,6 @@ function extraforumperm_usergroup_permissions_save()
 
     foreach (FIELDS_DATA['usergroups'] as $field_name => $field_definition) {
         $updated_group[$field_name] = $mybb->get_input($field_name, MyBB::INPUT_INT);
-    }
-}
-
-/**
- * Implementation of the ratethread_start hook
- *
- * If the current user is the topicstarter check the canrateownthreads permission
- */
-function extraforumperm_canrateownthreads()
-{
-    global $lang, $mybb, $thread, $forumpermissions;
-
-    if (!$forumpermissions['canrateownthreads'] && $thread['uid'] == $mybb->user['uid']) {
-        error($lang->error_cannotrateownthread);
     }
 }
 
