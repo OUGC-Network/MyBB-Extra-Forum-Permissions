@@ -12,6 +12,7 @@ $l['extraforumperm_description'] = 'Adds extra forum permissions to your board.'
 $l['group_extra'] = 'Extra';
 
 $l['extra_field_can_rate_own_threads'] = 'Can rate own threads?';
+$l['extra_field_can_moderate_own_threads'] = 'Can moderate own threads?';
 $l['extra_field_canstickyownthreads'] = 'Can sticky own threads?';
 $l['extra_field_cancloseownthreads'] = 'Can close own threads?';
 $l['extra_field_can_post_links_in_threads'] = 'Can post links in threads?';

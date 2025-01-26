@@ -19,6 +19,12 @@ const FIELDS_DATA = [
                 'disabled_for_guest_group' => true
             ]
         ],
+        'can_moderate_own_threads' => [
+            'type' => 'TINYINT',
+            'unsigned' => true,
+            'default' => 0,
+            'form_type' => 'check_box',
+        ],
         'canstickyownthreads' => [
             'type' => 'TINYINT',
             'unsigned' => true,
@@ -81,6 +87,12 @@ const FIELDS_DATA = [
             'type' => 'TINYINT',
             'unsigned' => true,
             'default' => 1,
+            'form_type' => 'check_box',
+        ],
+        'can_moderate_own_threads' => [
+            'type' => 'TINYINT',
+            'unsigned' => true,
+            'default' => 0,
             'form_type' => 'check_box',
         ],
         'canstickyownthreads' => [

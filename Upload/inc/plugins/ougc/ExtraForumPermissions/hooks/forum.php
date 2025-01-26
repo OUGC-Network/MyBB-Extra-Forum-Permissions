@@ -27,7 +27,10 @@ function global_end(): bool
 
 function editpost_start(string $script_name): bool
 {
-    global $mybb, $plugins;
+    global $mybb;
+    global $extra_moderate_own_threads;
+
+    $extra_moderate_own_threads = true;
 
     $forum_id = $mybb->get_input('fid', MyBB::INPUT_INT);
 
@@ -64,18 +67,41 @@ function is_moderator90(array $hook_arguments): array
 {
     global $mybb;
     global $thread;
-    global $extra_rate_thread_script;
+    global $extra_rate_thread_script, $extra_moderate_own_threads;
 
     if (
-        empty($mybb->user['uid']) ||
-        empty($thread['uid']) ||
-        $mybb->user['uid'] != $thread['uid']) {
-        unset($extra_rate_thread_script);
+        !empty($mybb->user['uid']) &&
+        !empty($thread['uid']) &&
+        (int)$mybb->user['uid'] === (int)$thread['uid']
+    ) {
+        if (!empty($extra_rate_thread_script)) {
+            $thread['uid'] = 0;
+        }
 
-        return $hook_arguments;
+        if (!empty($hook_arguments['uid']) && (int)$hook_arguments['uid'] !== (int)$mybb->user['uid']) {
+            return $hook_arguments;
+        }
+
+        if (!empty($extra_moderate_own_threads)) {
+            $forum_permissions = forum_permissions($hook_arguments['fid'] ?? 0, $hook_arguments['uid'] ?? 0);
+
+            if (empty($forum_permissions['can_moderate_own_threads'])) {
+                return $hook_arguments;
+            }
+
+            switch ($hook_arguments['action']) {
+                case 'caneditposts':
+                case 'cansoftdeleteposts':
+                case 'canrestoreposts':
+                case 'canapproveunapproveposts':
+                case 'canpostclosedthreads':
+                case 'canviewdeleted':
+                case 'canviewunapprove':
+                    $hook_arguments['is_moderator'] = true;
+                    break;
+            }
+        }
     }
-
-    $thread['uid'] = 0;
 
     return $hook_arguments;
 }
@@ -96,6 +122,39 @@ function ratethread_start09(): bool
 
         error($lang->error_cannotrateownthread);
     }
+
+    return true;
+}
+
+function showthread_start(): bool
+{
+    global $mybb;
+
+    if ($mybb->input['action'] !== "thread") {
+        return false;
+    }
+
+    global $extra_moderate_own_threads;
+
+    $extra_moderate_own_threads = true;
+
+    return true;
+}
+
+function attachment_start(): bool
+{
+    global $extra_moderate_own_threads;
+
+    $extra_moderate_own_threads = true;
+
+    return true;
+}
+
+function xmlhttp_edit_post_start(): bool
+{
+    global $extra_moderate_own_threads;
+
+    $extra_moderate_own_threads = true;
 
     return true;
 }
