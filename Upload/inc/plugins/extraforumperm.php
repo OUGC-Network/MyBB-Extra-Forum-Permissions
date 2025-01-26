@@ -6,9 +6,35 @@
  * $Id$
  */
 
-// Disallow direct access to this file for security reasons
+use function ExtraForumPermissions\Admin\plugin_activation;
+use function ExtraForumPermissions\Admin\plugin_deactivation;
+use function ExtraForumPermissions\Admin\plugin_information;
+use function ExtraForumPermissions\Admin\plugin_is_installed;
+use function ExtraForumPermissions\Admin\plugin_uninstallation;
+use function ExtraForumPermissions\Core\addHooks;
+use function ExtraForumPermissions\Core\load_language;
+
+use const ExtraForumPermissions\Core\FIELDS_DATA;
+use const ExtraForumPermissions\ROOT;
+
 if (!defined('IN_MYBB')) {
     die('Direct initialization of this file is not allowed.<br /><br />Please make sure IN_MYBB is defined.');
+}
+
+define('ExtraForumPermissions\ROOT', MYBB_ROOT . 'inc/plugins/ougc/ExtraForumPermissions');
+
+require_once ROOT . '/core.php';
+
+if (defined('IN_ADMINCP')) {
+    require_once ROOT . '/admin.php';
+
+    require_once ROOT . '/hooks/admin.php';
+
+    addHooks('ExtraForumPermissions\Hooks\Admin');
+} else {
+    require_once ROOT . '/hooks/forum.php';
+
+    addHooks('ExtraForumPermissions\Hooks\Forum');
 }
 
 global $plugins;
@@ -35,113 +61,33 @@ $plugins->add_hook('datahandler_post_validate_post', 'extraforumperm_validatepos
  * Info function for MyBB plugin system
  */
 function extraforumperm_info()
+function extraforumperm_info(): array
 {
-    global $lang;
-    $lang->load('extraforumperm');
-
-    $donate_button =
-        '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RQNL345SN45DS" style="float:right;margin-top:-8px;padding:4px;" target="_blank"><img src="https://www.paypalobjects.com/WEBSCR-640-20110306-1/en_US/i/btn/btn_donate_SM.gif" /></a>';
-
-    return [
-        'name' => $lang->extraforumperm,
-        'description' => "{$donate_button}{$lang->extraforumperm_description}",
-        'website' => 'https://github.com/OUGC-Network/MyBB-Extra-Forum-Permissions',
-        'author' => 'Aries-Belgium',
-        'authorsite' => 'mailto:aries.belgium@gmail.com',
-        'version' => '1.8.0',
-        'versioncode' => '1800',
-        'compatibility' => '18*',
-        'codename' => 'extra_forum_perms'
-    ];
-}
-
-/**
- * The install function for the plugin system
- */
-function extraforumperm_install()
-{
-    global $db, $cache;
-
-    // add the extra fields to the permission table
-    $permissions = extraforumperm_permissions();
-    foreach ($permissions as $permission => $default) {
-        if (!$db->field_exists($permission, 'forumpermissions')) {
-            $db->query(
-                'ALTER TABLE ' . TABLE_PREFIX . "forumpermissions ADD  {$permission} INT( 1 ) NOT NULL DEFAULT  '{$default}'"
-            );
-        }
-        if (!$db->field_exists($permission, 'usergroups')) {
-            $db->query(
-                'ALTER TABLE ' . TABLE_PREFIX . "usergroups ADD  {$permission} INT( 1 ) NOT NULL DEFAULT  '{$default}'"
-            );
-        }
-    }
-
-    // rebuild the cache
-    $cache->update_usergroups();
-    $cache->update_forumpermissions();
+    return plugin_information();
 }
 
 /**
  * The is_installed function for the plugin system
  */
-function extraforumperm_is_installed()
+function extraforumperm_is_installed(): bool
 {
-    global $db;
-
-    // check if the extra fields exist
-    $all_fields_exist = true;
-    $permissions = extraforumperm_permissions();
-    foreach ($permissions as $permission => $default) {
-        $all_fields_exist = $db->field_exists($permission, 'forumpermissions') &&
-            $db->field_exists($permission, 'usergroups') &&
-            $all_fields_exist;
-
-        if (!$all_fields_exist) {
-            break;
-        }
-    }
-
-    return $all_fields_exist;
+    return plugin_is_installed();
 }
 
 /**
  * The uninstall function for the plugin system
  */
-function extraforumperm_uninstall()
+function extraforumperm_uninstall(): bool
 {
-    global $db, $cache;
-
-    // delete the extra fields
-    $permissions = extraforumperm_permissions();
-    foreach ($permissions as $permission => $default) {
-        $db->drop_column('forumpermissions', $permission);
-        $db->drop_column('usergroups', $permission);
-    }
-
-    // rebuild the cache
-    $cache->update_usergroups();
-    $cache->update_forumpermissions();
+    return plugin_uninstallation();
 }
 
 /**
  * The activate function for the plugin system
  */
-function extraforumperm_activate()
+function extraforumperm_activate(): bool
 {
-    global $cache;
-
-    // rebuild the cache
-    $cache->update_usergroups();
-    $cache->update_forumpermissions();
-
-    require_once MYBB_ROOT . 'inc/adminfunctions_templates.php';
-
-    find_replace_templatesets(
-        'showthread_quickreply',
-        '#' . preg_quote('{$closeoption}') . '#i',
-        '<!--EXTRAPERMISSIONS-->'
-    );
+    return plugin_activation();
 }
 
 /**
@@ -149,22 +95,7 @@ function extraforumperm_activate()
  */
 function extraforumperm_deactivate()
 {
-    require_once MYBB_ROOT . 'inc/adminfunctions_templates.php';
-
-    find_replace_templatesets('showthread_quickreply', '#' . preg_quote('<!--EXTRAPERMISSIONS-->') . '#i', '');
-}
-
-function extraforumperm_permissions()
-{
-    return [
-        'canrateownthreads' => 1,
-        'canstickyownthreads' => 0,
-        'cancloseownthreads' => 0,
-        'can_post_links_in_threads' => 1,
-        'canpostlinks' => 1,
-        'canpostimages' => 1,
-        'canpostvideos' => 1
-    ];
+    return plugin_deactivation();
 }
 
 /**
@@ -172,21 +103,26 @@ function extraforumperm_permissions()
  *
  * Add the extra permissions to the custom permissions form
  */
-function extraforumperm_custom_permissions(&$groups)
+function extraforumperm_custom_permissions(array &$groups): array
 {
-    global $lang;
-    $lang->load('extraforumperm');
+    global $extra_forum_permissions;
 
-    $permissions = extraforumperm_permissions();
-    foreach ($permissions as $permission => $default) {
-        $groups[$permission] = 'extra';
+    $extra_forum_permissions = true;
+
+    load_language();
+
+    foreach (FIELDS_DATA['forumpermissions'] as $field_name => $field_definition) {
+        $groups[$field_name] = 'extra';
     }
+
+    return $groups;
 }
 
 function extraforumperm_usergroup_permissions_tab(&$tabs)
 {
     global $lang;
-    $lang->load('extraforumperm');
+
+    load_language();
 
     $tabs['extra'] = $lang->group_extra;
 }
@@ -199,22 +135,38 @@ function extraforumperm_usergroup_permissions_tab(&$tabs)
 function extraforumperm_usergroup_permissions()
 {
     global $mybb, $lang, $form;
-    $lang->load('extraforumperm');
 
-    $permissions = extraforumperm_permissions();
+    load_language();
 
     print '<div id="tab_extra">';
     $form_container = new FormContainer($lang->group_extra);
 
     $extra_options = [];
-    foreach ($permissions as $permission => $default) {
-        $l = 'extra_field_' . $permission;
-        $extra_options[] = $form->generate_check_box(
-            $permission,
-            1,
-            $lang->$l,
-            ['checked' => $mybb->get_input($permission, MyBB::INPUT_INT)]
-        );
+
+    foreach (FIELDS_DATA['usergroups'] as $field_name => $field_definition) {
+        if (empty($field_definition['form_type'])) {
+            continue;
+        }
+
+        $lang_field = 'extra_field_' . $field_name;
+
+        switch ($field_definition['form_type']) {
+            case 'numeric':
+                $extra_options[] = "{$lang->{$lang_field}}<br /><small class=\"input\">{$lang->{"{$lang_field}_desc"}}</small><br />" . $form->generate_numeric_field(
+                        $field_name,
+                        $mybb->get_input($field_name, MyBB::INPUT_INT),
+                        $field_definition['form_options']
+                    );
+                break;
+            case 'check_box':
+                $extra_options[] = $form->generate_check_box(
+                    $field_name,
+                    1,
+                    $lang->{$lang_field},
+                    ['checked' => $mybb->get_input($field_name, MyBB::INPUT_INT)]
+                );
+                break;
+        }
     }
 
     $form_container->output_row(
@@ -235,10 +187,8 @@ function extraforumperm_usergroup_permissions_save()
 {
     global $mybb, $updated_group;
 
-    $permissions = extraforumperm_permissions();
-
-    foreach ($permissions as $permission => $default) {
-        $updated_group[$permission] = $mybb->get_input($permission, MyBB::INPUT_INT);
+    foreach (FIELDS_DATA['usergroups'] as $field_name => $field_definition) {
+        $updated_group[$field_name] = $mybb->get_input($field_name, MyBB::INPUT_INT);
     }
 }
 
@@ -623,7 +573,8 @@ function extraforumperm_save_modoptions()
 function extraforumperm_validatepost(&$datahandler)
 {
     global $plugins, $lang;
-    $lang->load('extraforumperm');
+
+    load_language();
 
     $forumpermissions = forum_permissions($datahandler->data['fid']);
 

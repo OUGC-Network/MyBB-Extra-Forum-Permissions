@@ -18,3 +18,6 @@ $l['extra_field_can_post_links_in_threads'] = 'Can post links in threads?';
 $l['extra_field_canpostlinks'] = 'Can post links in posts?';
 $l['extra_field_canpostimages'] = 'Can post images?';
 $l['extra_field_canpostvideos'] = 'Can post videos?';
+
+$l['extra_field_extra_subject_length'] = 'Max Post Subject';
+$l['extra_field_extra_subject_length_desc'] = 'Maximum subject length by users in this group.';

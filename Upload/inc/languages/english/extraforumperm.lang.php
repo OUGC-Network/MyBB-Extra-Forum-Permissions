@@ -6,6 +6,7 @@
  * Last updated: 2011-04-13 (yyyy-mm-dd)
  */
 
+$l['extraforumperm'] = 'Extra Forum Permissions';
 $l['error_canrateownthread'] = 'You are not allowed to rate your own thread.';
 $l['error_canpostlinks'] = 'You are not allowed to post links in this forum.';
 $l['error_canpostimages'] = 'You are not allowed to post images in this forum.';
