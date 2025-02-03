@@ -181,6 +181,13 @@ const FIELDS_DATA_CORE = [
             'default' => '',
         ],
     ],
+    'forums' => [
+        'lastpostsubject' => [
+            'type' => 'VARCHAR',
+            'size' => 255,
+            'default' => '',
+        ],
+    ],
 ];
 
 const REGULAR_EXPRESSIONS_URL = [
