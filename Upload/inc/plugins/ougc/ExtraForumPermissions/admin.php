@@ -26,10 +26,10 @@ function plugin_information(): array
         'name' => 'Extra Forum Permissions',
         'description' => "{$donate_button}{$lang->extraforumperm_description}",
         'website' => 'https://github.com/OUGC-Network/MyBB-Extra-Forum-Permissions',
-        'author' => 'Aries-Belgium',
+        'author' => 'Aries-Belgium & maintained by Omar G.',
         'authorsite' => 'mailto:aries.belgium@gmail.com',
-        'version' => '1.8.0',
-        'versioncode' => '1800',
+        'version' => '1.8.1',
+        'versioncode' => '1801',
         'compatibility' => '18*',
         'codename' => 'extra_forum_perms'
     ];
