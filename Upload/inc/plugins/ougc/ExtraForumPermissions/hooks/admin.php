@@ -51,7 +51,6 @@ function admin_formcontainer_output_row(array &$hook_arguments): array
 function admin_forum_management_permissions_commit(): bool
 {
     global $db;
-    global $update_array;
     global $fid, $pid;
 
     if ($fid && !$pid) {

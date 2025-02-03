@@ -37,15 +37,7 @@ function plugin_information(): array
 
 function plugin_activation(): bool
 {
-    global $lang, $cache;
-
-    require_once MYBB_ROOT . '/inc/adminfunctions_templates.php';
-
-    find_replace_templatesets(
-        'showthread_quickreply',
-        '#' . preg_quote('{$closeoption}') . '#i',
-        '<!--EXTRAPERMISSIONS-->'
-    );
+    global $cache;
 
     // Insert/update version into cache
     $plugins = $cache->read('ougc_plugins');
@@ -59,8 +51,6 @@ function plugin_activation(): bool
     if (!isset($plugins['extra_forum_permissions'])) {
         $plugins['extra_forum_permissions'] = $plugin_information['versioncode'];
     }
-
-    //\ExtraForumPermissions\Core\update_cache();
 
     /*~*~* RUN UPDATES START *~*~*/
 
@@ -133,10 +123,6 @@ function plugin_activation(): bool
 
 function plugin_deactivation(): bool
 {
-    require_once MYBB_ROOT . '/inc/adminfunctions_templates.php';
-
-    find_replace_templatesets('showthread_quickreply', '#' . preg_quote('<!--EXTRAPERMISSIONS-->') . '#i', '');
-
     return true;
 }
 
