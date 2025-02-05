@@ -25,3 +25,4 @@ $l['extra_field_extra_subject_length'] = 'Max Post Subject';
 $l['extra_field_extra_subject_length_desc'] = 'Maximum subject length by users in this group.';
 $l['extra_field_extra_maximum_attachments'] = 'Maximum Attachments Per Post';
 $l['extra_field_extra_maximum_attachments_desc'] = 'The maximum number of attachments a user is allowed to upload per post. Set to 0 to use global setting.';
+$l['extra_plugin_library'] = 'This plugin requires <a href="{1}">PluginLibrary</a> version {2} or later to be uploaded to your forum.';
