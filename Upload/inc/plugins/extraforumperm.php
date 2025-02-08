@@ -23,6 +23,10 @@ if (!defined('IN_MYBB')) {
 
 define('ExtraForumPermissions\ROOT', MYBB_ROOT . 'inc/plugins/ougc/ExtraForumPermissions');
 
+define('ExtraForumPermissions\DEBUG', false);
+
+defined('PLUGINLIBRARY') || define('PLUGINLIBRARY', MYBB_ROOT . 'inc/plugins/pluginlibrary.php');
+
 require_once ROOT . '/core.php';
 
 if (defined('IN_ADMINCP')) {
