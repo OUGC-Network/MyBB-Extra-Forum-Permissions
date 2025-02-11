@@ -117,12 +117,26 @@ function plugin_activation(): bool
     $plugins['extra_forum_permissions'] = $plugin_information['versioncode'];
 
     $cache->update('ougc_plugins', $plugins);
+    
+    // Templates modifications
+    require_once MYBB_ROOT . '/inc/adminfunctions_templates.php';
+    find_replace_templatesets('editpost', '#maxlength="85"#', 'maxlength="{$extra_maximum_subject_length}"');
+    find_replace_templatesets('newthread', '#maxlength="85"#', 'maxlength="{$extra_maximum_subject_length}"');
+    find_replace_templatesets('newreply', '#maxlength="85"#', 'maxlength="{$extra_maximum_subject_length}"');
+    find_replace_templatesets('showthread_quickreply', '#{\$closeoption}#', '<!--EXTRAPERMISSIONS-->');
 
     return true;
 }
 
 function plugin_deactivation(): bool
 {
+    // Templates rollback
+    require_once MYBB_ROOT . '/inc/adminfunctions_templates.php';
+    find_replace_templatesets('editpost', '#{\$extra_maximum_subject_length}#', '85');
+    find_replace_templatesets('newthread', '#{\$extra_maximum_subject_length}#', '85');
+    find_replace_templatesets('newreply', '#{\$extra_maximum_subject_length}#', '85');
+    find_replace_templatesets('showthread_quickreply', '#<!--EXTRAPERMISSIONS-->#', '{\$closeoption}');
+    
     return true;
 }
 
