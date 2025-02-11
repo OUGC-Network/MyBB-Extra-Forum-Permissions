@@ -14,6 +14,21 @@ use PostParser;
 
 use const ExtraForumPermissions\Core\REGULAR_EXPRESSIONS_URL;
 
+function global_start05(): bool
+{
+    global $templatelist;
+
+    if (isset($templatelist)) {
+        $templatelist .= ',';
+    } else {
+        $templatelist = '';
+    }
+
+    $templatelist .= 'extraforumpermissions_my_code_url_hidden';
+
+    return true;
+}
+
 function global_end(): bool
 {
     if (defined('THIS_SCRIPT') && constant('THIS_SCRIPT') === 'ratethread.php') {

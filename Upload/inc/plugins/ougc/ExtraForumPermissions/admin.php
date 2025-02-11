@@ -8,10 +8,16 @@
 
 namespace ExtraForumPermissions\Admin;
 
+use DirectoryIterator;
+use PluginLibrary;
+use stdClass;
+
 use function ExtraForumPermissions\Core\load_language;
 
 use const ExtraForumPermissions\Core\FIELDS_DATA;
 use const ExtraForumPermissions\Core\FIELDS_DATA_CORE;
+use const ExtraForumPermissions\ROOT;
+use const PLUGINLIBRARY;
 
 function plugin_information(): array
 {
@@ -31,13 +37,44 @@ function plugin_information(): array
         'version' => '1.8.1',
         'versioncode' => '1801',
         'compatibility' => '18*',
-        'codename' => 'extra_forum_perms'
+        'codename' => 'extra_forum_perms',
+        'pl' => [
+            'version' => 13,
+            'url' => 'https://community.mybb.com/mods.php?action=view&pid=573'
+        ]
     ];
 }
 
 function plugin_activation(): bool
 {
     global $cache;
+    global $PL;
+
+    plugin_library_load();
+
+    $templates = [];
+
+    if (file_exists($templateDirectory = ROOT . '/templates')) {
+        $templatesDirIterator = new DirectoryIterator($templateDirectory);
+
+        foreach ($templatesDirIterator as $template) {
+            if (!$template->isFile()) {
+                continue;
+            }
+
+            $pathName = $template->getPathname();
+
+            $pathInfo = pathinfo($pathName);
+
+            if ($pathInfo['extension'] === 'html') {
+                $templates[$pathInfo['filename']] = file_get_contents($pathName);
+            }
+        }
+    }
+
+    if ($templates) {
+        $PL->templates('extraforumpermissions', 'Extra Forum Permissions', $templates);
+    }
 
     // Insert/update version into cache
     $plugins = $cache->read('ougc_plugins');
@@ -245,4 +282,37 @@ function db_build_field_definition(array $field_data): string
     }
 
     return $field_definition;
+}
+
+function plugin_library_load(): bool
+{
+    global $PL, $lang;
+
+    load_language();
+
+    $file_exists = file_exists(PLUGINLIBRARY);
+
+    if ($file_exists && !($PL instanceof PluginLibrary)) {
+        require_once PLUGINLIBRARY;
+    }
+
+    if (!$file_exists || $PL->version < plugin_library_requirements()->version) {
+        flash_message(
+            $lang->sprintf(
+                $lang->extra_plugin_library,
+                plugin_library_requirements()->url,
+                plugin_library_requirements()->version
+            ),
+            'error'
+        );
+
+        admin_redirect('index.php?module=config-plugins');
+    }
+
+    return true;
+}
+
+function plugin_library_requirements(): stdClass
+{
+    return (object)plugin_information()['pl'];
 }
