@@ -58,6 +58,10 @@ A setup that meets the following requirements is necessary to use this plugin.
    │ │ │ ├── admin
    │ │ │ │ ├── extraforumperm.lang.php
    │ │ │ ├── extraforumperm.lang.php
+   │ │ ├── french
+   │ │ │ ├── admin
+   │ │ │ │ ├── extraforumperm.lang.php
+   │ │ │ ├── extraforumperm.lang.php
    │ ├── plugins
    │ │ ├── ougc
    │ │ │ ├── ExtraForumPermissions
@@ -88,13 +92,6 @@ Follow the next steps in order to update your copy of this plugin.
 2. Follow step 1 and 2 from the [Install](#install) section.
 3. Browse to _Configuration » Plugins_ and activate this plugin by clicking _Activate_.
 4. Browse to _Settings_ to manage the plugin settings.
-
-### Template Modifications <a name = "template_modifications"></a>
-
-1. Open the `editpost`, find `maxlength="85"` and replace with `maxlength="{$extra_maximum_subject_length}"`.
-2. Open the `newthread`, find `maxlength="85"` and replace with `maxlength="{$extra_maximum_subject_length}"`.
-3. Open the `newreply`, find `maxlength="85"` and replace with `maxlength="{$extra_maximum_subject_length}"`.
-4. Open the `showthread_quickreply`, find `{$closeoption}` and replace with `<!--EXTRAPERMISSIONS-->`.
 
 [Go up to Table of Contents](#table_of_contents)
 
