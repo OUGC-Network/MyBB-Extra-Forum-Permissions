@@ -230,31 +230,39 @@ function parse_message_me_mycode(string &$message): string
 function newthread_do_newthread_start(): bool
 {
     global $mybb, $cache;
-    global $forumpermissions;
-    global $fid;
-
-    $forum_permissions = (array)$cache->read('forumpermissions');
+    global $forum, $forumpermissions, $fid;
 
     $is_forum_permission = true;
 
-    $maximum_threads_per_day_forum = null;
+    $maximum_threads_per_day_forum = (int)$forum['extra_maximum_threads_per_day'];
 
-    foreach (array_merge([$mybb->user['usergroup']], explode(',', $mybb->user['additionalgroups'])) as $group_id) {
-        if (isset($forum_permissions[$fid][$group_id])) {
-            $group_permissions = $forum_permissions[$fid][$group_id];
+    if ($maximum_threads_per_day_forum === 0) {
+        $maximum_threads_per_day_forum = null;
+    }
 
-            if (empty($group_permissions['canpostthreads'])) {
-                continue;
-            }
+    if ($maximum_threads_per_day_forum === null) {
+        $forum_permissions = (array)$cache->read('forumpermissions');
 
-            $extra_maximum_threads_per_day = (int)$group_permissions['extra_maximum_threads_per_day'];
+        foreach (array_merge([$mybb->user['usergroup']], explode(',', $mybb->user['additionalgroups'])) as $group_id) {
+            if (isset($forum_permissions[$fid][$group_id])) {
+                $group_permissions = $forum_permissions[$fid][$group_id];
 
-            if ($extra_maximum_threads_per_day === 0) {
-                $maximum_threads_per_day_forum = 0;
-            }
+                if (empty($group_permissions['canpostthreads'])) {
+                    continue;
+                }
 
-            if ($extra_maximum_threads_per_day !== 0 && $maximum_threads_per_day_forum !== 0) {
-                $maximum_threads_per_day_forum = max($extra_maximum_threads_per_day, $maximum_threads_per_day_forum);
+                $extra_maximum_threads_per_day = (int)$group_permissions['extra_maximum_threads_per_day'];
+
+                if ($extra_maximum_threads_per_day === 0) {
+                    $maximum_threads_per_day_forum = 0;
+                }
+
+                if ($extra_maximum_threads_per_day !== 0 && $maximum_threads_per_day_forum !== 0) {
+                    $maximum_threads_per_day_forum = max(
+                        $extra_maximum_threads_per_day,
+                        $maximum_threads_per_day_forum
+                    );
+                }
             }
         }
     }

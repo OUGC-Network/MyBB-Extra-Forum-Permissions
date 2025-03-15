@@ -101,6 +101,18 @@ const FIELDS_DATA = [
             ]
         ],
     ],
+    'forums' => [
+        'extra_maximum_threads_per_day' => [
+            'type' => 'TINYINT',
+            'unsigned' => true,
+            'default' => 0,
+            'form_type' => 'numeric',
+            'form_options' => [
+                'min' => 0,
+                'max' => 255
+            ]
+        ],
+    ],
     'usergroups' => [
         'can_rate_own_threads' => [
             'type' => 'TINYINT',

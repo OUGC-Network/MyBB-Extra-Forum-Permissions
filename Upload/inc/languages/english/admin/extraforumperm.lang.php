@@ -29,5 +29,8 @@ $l = [
     'extra_field_extra_maximum_threads_per_day' => 'Maximum Threads Per Day',
     'extra_field_extra_maximum_threads_per_day_desc' => 'This is the total number of threads allowed per user per day. 0 for unlimited.',
 
+    'extra_forum_tab' => 'Extra Permissions',
+    'extra_maximum_threads_per_day' => 'Maximum Threads Per Day<br /><small class="input">This is the total number of threads allowed per user per day. 0 to fallback to group and custom permissions. If not 0 will overwrite group and custom permissions.</small><br />',
+
     'extra_plugin_library' => 'This plugin requires <a href="{1}">PluginLibrary</a> version {2} or later to be uploaded to your forum.',
 ];
