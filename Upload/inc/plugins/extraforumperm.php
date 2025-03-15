@@ -636,3 +636,9 @@ function extraforumperm_validatepost(&$datahandler)
         }
     }
 }
+
+global $groupzerogreater, $grouppermbyswitch;
+
+$groupzerogreater[] = 'extra_maximum_threads_per_day';
+
+$grouppermbyswitch['extra_maximum_threads_per_day'] = 'canpostthreads';

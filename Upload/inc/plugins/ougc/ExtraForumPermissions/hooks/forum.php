@@ -12,9 +12,11 @@ use MyBB;
 
 use PostParser;
 
+use function ExtraForumPermissions\Core\load_language;
+
 use const ExtraForumPermissions\Core\REGULAR_EXPRESSIONS_URL;
 
-function global_start05(): bool
+function global_start(): bool
 {
     global $templatelist;
 
@@ -223,4 +225,85 @@ function parse_message_me_mycode(string &$message): string
     }
 
     return $message;
+}
+
+function newthread_do_newthread_start(): bool
+{
+    global $mybb, $cache;
+    global $forumpermissions;
+    global $fid;
+
+    $forum_permissions = (array)$cache->read('forumpermissions');
+
+    $is_forum_permission = true;
+
+    $maximum_threads_per_day_forum = null;
+
+    foreach (array_merge([$mybb->user['usergroup']], explode(',', $mybb->user['additionalgroups'])) as $group_id) {
+        if (isset($forum_permissions[$fid][$group_id])) {
+            $group_permissions = $forum_permissions[$fid][$group_id];
+
+            if (empty($group_permissions['canpostthreads'])) {
+                continue;
+            }
+
+            $extra_maximum_threads_per_day = (int)$group_permissions['extra_maximum_threads_per_day'];
+
+            if ($extra_maximum_threads_per_day === 0) {
+                $maximum_threads_per_day_forum = 0;
+            }
+
+            if ($extra_maximum_threads_per_day !== 0 && $maximum_threads_per_day_forum !== 0) {
+                $maximum_threads_per_day_forum = max($extra_maximum_threads_per_day, $maximum_threads_per_day_forum);
+            }
+        }
+    }
+
+    if ($maximum_threads_per_day_forum === null) {
+        $is_forum_permission = false;
+
+        $maximum_threads_per_day_forum = $mybb->usergroup['extra_maximum_threads_per_day'];
+    }
+
+    if ($maximum_threads_per_day_forum > 0) {
+        global $db;
+
+        $day_cut = TIME_NOW - 60 * 60 * 24;
+
+        $current_user_id = (int)$mybb->user['uid'];
+
+        $query = $db->simple_select(
+            'threads',
+            'COUNT(tid) AS threads_today',
+            "uid='{$current_user_id}' AND visible!='-1' AND dateline>'{$day_cut}'"
+        );
+
+        $threads_today = $db->fetch_field($query, 'threads_today');
+
+        if ($threads_today >= $maximum_threads_per_day_forum) {
+            global $lang;
+
+            load_language();
+
+            if ($is_forum_permission) {
+                $language_string = $lang->error_extra_maximum_threads_per_day_forum;
+            } else {
+                $language_string = $lang->error_extra_maximum_threads_per_day_group;
+            }
+
+            error(
+                $lang->sprintf(
+                    $language_string,
+                    $maximum_threads_per_day_forum
+                )
+            );
+        }
+    }
+
+    return true;
+}
+
+function newthread_start(): bool
+{
+    return newthread_do_newthread_start();
 }
