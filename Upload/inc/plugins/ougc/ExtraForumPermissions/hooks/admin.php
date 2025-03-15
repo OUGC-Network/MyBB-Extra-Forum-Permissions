@@ -155,6 +155,30 @@ function admin_formcontainer_end(array &$current_hook_arguments): array
                         $form_options
                     );
                 break;
+            case 'select':
+                if (in_array($data_field_data['type'], ['DECIMAL', 'FLOAT'])) {
+                    $value = (float)$forum_data[$data_field_key];
+                } else {
+                    $value = (int)$forum_data[$data_field_key];
+                }
+
+                $select_options = [];
+
+                if (isset($data_field_data['select_data'])) {
+                    $select_options = array_map(function (string &$option) use ($lang, $data_field_key): string {
+                        $option = $lang->{"{$data_field_key}_{$option}"};
+
+                        return $option;
+                    }, $data_field_data['select_data']);
+                }
+
+                $form_fields[] = $lang->{$setting_language_string} . $form->generate_select_box(
+                        $data_field_key,
+                        $select_options,
+                        [$value],
+                        $form_options
+                    );
+                break;
         }
     }
 

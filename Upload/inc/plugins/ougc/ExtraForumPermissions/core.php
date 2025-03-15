@@ -90,7 +90,7 @@ const FIELDS_DATA = [
                 'max' => 255
             ]
         ],
-        'extra_maximum_threads_per_day' => [
+        'extra_maximum_threads' => [
             'type' => 'TINYINT',
             'unsigned' => true,
             'default' => 0,
@@ -102,10 +102,31 @@ const FIELDS_DATA = [
         ],
     ],
     'forums' => [
-        'extra_maximum_threads_per_day' => [
+        'extra_maximum_threads' => [
             'type' => 'TINYINT',
             'unsigned' => true,
             'default' => 0,
+            'form_type' => 'numeric',
+            'form_options' => [
+                'min' => 0,
+                'max' => 255
+            ]
+        ],
+        'extra_maximum_threads_type' => [
+            'type' => 'TINYINT',
+            'unsigned' => true,
+            'default' => 2,
+            'form_type' => 'select',
+            'select_data' => [
+                1 => 'hours',
+                2 => 'days',
+                3 => 'weeks',
+            ]
+        ],
+        'extra_maximum_threads_type_amount' => [
+            'type' => 'TINYINT',
+            'unsigned' => true,
+            'default' => 1,
             'form_type' => 'numeric',
             'form_options' => [
                 'min' => 0,
@@ -188,7 +209,7 @@ const FIELDS_DATA = [
                 'max' => 255
             ]
         ],
-        'extra_maximum_threads_per_day' => [
+        'extra_maximum_threads' => [
             'type' => 'TINYINT',
             'unsigned' => true,
             'default' => 0,
