@@ -322,12 +322,14 @@ function newthread_do_newthread_start(): bool
                 $language_string .= $lang->sprintf(
                     $lang->error_extra_maximum_threads_forum_description,
                     my_number_format($maximum_threads_forum),
+                    $forum['extra_maximum_threads_type_amount'],
                     $time_cut_language_variable
                 );
             } else {
                 $language_string .= $lang->sprintf(
                     $lang->error_extra_maximum_threads_group_description,
                     my_number_format($maximum_threads_forum),
+                    $forum['extra_maximum_threads_type_amount'],
                     $time_cut_language_variable
                 );
             }
