@@ -89,6 +89,7 @@ function admin_formcontainer_end(array &$current_hook_arguments): array
         $done ||
         $run_module !== 'forum' ||
         !isset($current_hook_arguments['this']->_title) ||
+        !isset($lang->additional_forum_options) ||
         (
             $current_hook_arguments['this']->_title !== $lang->additional_forum_options &&
             $current_hook_arguments['this']->_title !== "<div class=\"float_right\" style=\"font-weight: normal;\"><a href=\"#\" onclick=\"$('#additional_options_link').toggle(); $('#additional_options').fadeToggle('fast'); return false;\">{$lang->hide_additional_options}</a></div>" . $lang->additional_forum_options

@@ -11,6 +11,12 @@ namespace ExtraForumPermissions\Core;
 use const ExtraForumPermissions\DEBUG;
 use const ExtraForumPermissions\ROOT;
 
+const FORM_VALUE_TYPE_HOURS = 1;
+
+const FORM_VALUE_TYPE_DAYS = 2;
+
+const FORM_VALUE_TYPE_WEEKS = 3;
+
 const FIELDS_DATA = [
     'forumpermissions' => [
         'can_rate_own_threads' => [
@@ -118,9 +124,9 @@ const FIELDS_DATA = [
             'default' => 2,
             'form_type' => 'select',
             'select_data' => [
-                1 => 'hours',
-                2 => 'days',
-                3 => 'weeks',
+                FORM_VALUE_TYPE_HOURS => 'hours',
+                FORM_VALUE_TYPE_DAYS => 'days',
+                FORM_VALUE_TYPE_WEEKS => 'weeks',
             ]
         ],
         'extra_maximum_threads_type_amount' => [

@@ -14,6 +14,9 @@ use PostParser;
 
 use function ExtraForumPermissions\Core\load_language;
 
+use const ExtraForumPermissions\Core\FORM_VALUE_TYPE_DAYS;
+use const ExtraForumPermissions\Core\FORM_VALUE_TYPE_HOURS;
+use const ExtraForumPermissions\Core\FORM_VALUE_TYPE_WEEKS;
 use const ExtraForumPermissions\Core\REGULAR_EXPRESSIONS_URL;
 
 function global_start(): bool
@@ -275,20 +278,21 @@ function newthread_do_newthread_start(): bool
 
     if ($maximum_threads_per_day_forum > 0) {
         global $db, $lang;
+        
         load_language();
 
         switch ($forum['extra_maximum_threads_type']) {
-            case 1;
+            case FORM_VALUE_TYPE_HOURS;
                 $day_cut = TIME_NOW - 60 * 60 * $forum['extra_maximum_threads_type_amount'];
 
                 $time_cut_language_variable = $lang->error_extra_maximum_threads_forum_hour;
                 break;
-            case 2;
+            case FORM_VALUE_TYPE_DAYS;
                 $day_cut = TIME_NOW - 60 * 60 * 24 * $forum['extra_maximum_threads_type_amount'];
 
                 $time_cut_language_variable = $lang->error_extra_maximum_threads_forum_day;
                 break;
-            case 3;
+            case FORM_VALUE_TYPE_WEEKS;
                 $day_cut = TIME_NOW - 60 * 60 * 24 * 7 * $forum['extra_maximum_threads_type_amount'];
 
                 $time_cut_language_variable = $lang->error_extra_maximum_threads_forum_week;
