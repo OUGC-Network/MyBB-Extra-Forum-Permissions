@@ -197,15 +197,7 @@ function editpost_end(): bool
 {
     global $plugins;
     global $extra_maximum_subject_length;
-
-    if ($plugins->current_hook === 'editpost_end') {
-        global $post;
-
-        $forumpermissions = forum_permissions($post['fid'] ?? 0, $post['uid'] ?? 0);
-    } else {
-        global $forumpermissions;
-    }
-
+    global $forumpermissions;
 
     $extra_maximum_subject_length = (int)$forumpermissions['extra_subject_length'];
 
@@ -304,7 +296,10 @@ function newthread_do_newthread_start(): bool
         $query = $db->simple_select(
             'threads',
             'COUNT(tid) AS threads_today',
-            "uid='{$current_user_id}' AND visible!='-1' AND dateline>'{$day_cut}'"
+            "uid='{$current_user_id}' AND visible!='-1' AND dateline>'{$day_cut}' AND fid='{$fid}'",
+            [
+                'limit' => 1
+            ]
         );
 
         $threads_today = $db->fetch_field($query, 'threads_today');
