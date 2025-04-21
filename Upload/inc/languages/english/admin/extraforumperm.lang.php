@@ -22,7 +22,7 @@ $l = [
     'extra_field_canpostimages' => 'Can post images?',
     'extra_field_canpostvideos' => 'Can post videos?',
 
-    'extra_field_extra_subject_length' => 'Max Post Subject',
+    'extra_field_extra_subject_length' => 'Max Post Subject Length',
     'extra_field_extra_subject_length_desc' => 'Maximum subject length by users in this group.',
     'extra_field_extra_maximum_attachments' => 'Maximum Attachments Per Post',
     'extra_field_extra_maximum_attachments_desc' => 'The maximum number of attachments a user is allowed to upload per post. Set to 0 to use global setting.',
