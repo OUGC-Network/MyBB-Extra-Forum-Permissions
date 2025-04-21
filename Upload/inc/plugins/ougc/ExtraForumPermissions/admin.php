@@ -34,8 +34,8 @@ function plugin_information(): array
         'website' => 'https://github.com/OUGC-Network/MyBB-Extra-Forum-Permissions',
         'author' => 'Aries-Belgium & maintained by Omar G.',
         'authorsite' => 'mailto:aries.belgium@gmail.com',
-        'version' => '1.8.1',
-        'versioncode' => '1801',
+        'version' => '1.8.2',
+        'versioncode' => '1802',
         'compatibility' => '18*',
         'codename' => 'extra_forum_perms',
         'pl' => [
