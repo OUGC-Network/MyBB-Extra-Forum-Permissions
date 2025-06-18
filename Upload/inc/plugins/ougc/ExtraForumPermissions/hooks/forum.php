@@ -9,14 +9,8 @@
 namespace ExtraForumPermissions\Hooks\Forum;
 
 use MyBB;
-
 use PostParser;
 
-use function ExtraForumPermissions\Core\load_language;
-
-use const ExtraForumPermissions\Core\FORM_VALUE_TYPE_DAYS;
-use const ExtraForumPermissions\Core\FORM_VALUE_TYPE_HOURS;
-use const ExtraForumPermissions\Core\FORM_VALUE_TYPE_WEEKS;
 use const ExtraForumPermissions\Core\REGULAR_EXPRESSIONS_URL;
 
 function global_start(): bool
@@ -220,123 +214,4 @@ function parse_message_me_mycode(string &$message): string
     }
 
     return $message;
-}
-
-function newthread_do_newthread_start(): bool
-{
-    global $mybb, $cache;
-    global $forum, $forumpermissions, $fid;
-
-    $is_forum_permission = true;
-
-    $maximum_threads_forum = (int)$forum['extra_maximum_threads'];
-
-    if ($maximum_threads_forum === 0) {
-        $maximum_threads_forum = null;
-    }
-
-    if ($maximum_threads_forum === null) {
-        $forum_permissions = (array)$cache->read('forumpermissions');
-
-        foreach (array_merge([$mybb->user['usergroup']], explode(',', $mybb->user['additionalgroups'])) as $group_id) {
-            if (isset($forum_permissions[$fid][$group_id])) {
-                $group_permissions = $forum_permissions[$fid][$group_id];
-
-                if (empty($group_permissions['canpostthreads'])) {
-                    continue;
-                }
-
-                $extra_maximum_threads = (int)$group_permissions['extra_maximum_threads'];
-
-                if ($extra_maximum_threads === 0) {
-                    $maximum_threads_forum = 0;
-                }
-
-                if ($extra_maximum_threads !== 0 && $maximum_threads_forum !== 0) {
-                    $maximum_threads_forum = max(
-                        $extra_maximum_threads,
-                        $maximum_threads_forum
-                    );
-                }
-            }
-        }
-    }
-
-    if ($maximum_threads_forum === null) {
-        $is_forum_permission = false;
-
-        $maximum_threads_forum = (int)$mybb->usergroup['extra_maximum_threads'];
-    }
-
-    if ($maximum_threads_forum > 0) {
-        global $db, $lang;
-
-        load_language();
-
-        switch ($forum['extra_maximum_threads_type']) {
-            case FORM_VALUE_TYPE_HOURS;
-                $day_cut = TIME_NOW - 60 * 60 * $forum['extra_maximum_threads_type_amount'];
-
-                $time_cut_language_variable = $lang->error_extra_maximum_threads_forum_hour;
-                break;
-            case FORM_VALUE_TYPE_DAYS;
-                $day_cut = TIME_NOW - 60 * 60 * 24 * $forum['extra_maximum_threads_type_amount'];
-
-                $time_cut_language_variable = $lang->error_extra_maximum_threads_forum_day;
-                break;
-            default;
-                $day_cut = TIME_NOW - 60 * 60 * 24 * 7 * $forum['extra_maximum_threads_type_amount'];
-
-                $time_cut_language_variable = $lang->error_extra_maximum_threads_forum_week;
-                break;
-        }
-
-        $current_user_id = (int)$mybb->user['uid'];
-
-        $query = $db->simple_select(
-            'threads',
-            'COUNT(tid) AS threads_today',
-            "uid='{$current_user_id}' AND visible!='-1' AND dateline>'{$day_cut}' AND fid='{$fid}'",
-            [
-                'limit' => 1
-            ]
-        );
-
-        $threads_today = $db->fetch_field($query, 'threads_today');
-
-        if ($threads_today >= $maximum_threads_forum) {
-            if ($is_forum_permission) {
-                $language_string = $lang->error_extra_maximum_threads_forum;
-            } else {
-                $language_string = $lang->error_extra_maximum_threads_group;
-            }
-
-            $language_string .= $lang->error_extra_maximum_threads_forum_note;
-
-            if ($is_forum_permission) {
-                $language_string .= $lang->sprintf(
-                    $lang->error_extra_maximum_threads_forum_description,
-                    my_number_format($maximum_threads_forum),
-                    $forum['extra_maximum_threads_type_amount'],
-                    $time_cut_language_variable
-                );
-            } else {
-                $language_string .= $lang->sprintf(
-                    $lang->error_extra_maximum_threads_group_description,
-                    my_number_format($maximum_threads_forum),
-                    $forum['extra_maximum_threads_type_amount'],
-                    $time_cut_language_variable
-                );
-            }
-
-            error($language_string);
-        }
-    }
-
-    return true;
-}
-
-function newthread_start(): bool
-{
-    return newthread_do_newthread_start();
 }
