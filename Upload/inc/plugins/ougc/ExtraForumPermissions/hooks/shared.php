@@ -74,11 +74,20 @@ function datahandler_post_validate_thread(PostDataHandler &$dataHandler): PostDa
     return $dataHandler;
 }
 
+function datahandler_post_validate_post(PostDataHandler &$dataHandler): PostDataHandler
+{
+    return datahandler_post_validate_thread($dataHandler);
+}
+
 function datahandler_post_validate_thread10(PostDataHandler &$dataHandler): PostDataHandler
 {
     global $mybb, $cache;
 
     $thread = &$dataHandler->data;
+
+    if (!empty($thread['savedraft'])) {
+        return $dataHandler;
+    }
 
     $forum_id = (int)$thread['fid'];
 
@@ -189,18 +198,9 @@ function datahandler_post_validate_thread10(PostDataHandler &$dataHandler): Post
             $language_string .= $lang->error_extra_maximum_threads_draft_notice;
 
             //error($language_string);
-            $this->set_error($language_string);
+            $dataHandler->set_error($language_string);
         }
     }
-
-    return $dataHandler;
-}
-
-function datahandler_post_validate_post(PostDataHandler &$dataHandler): PostDataHandler
-{
-    datahandler_post_validate_thread($dataHandler);
-
-    datahandler_post_validate_thread10($dataHandler);
 
     return $dataHandler;
 }

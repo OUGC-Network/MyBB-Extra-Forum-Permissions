@@ -16,7 +16,7 @@ $l = [
 
     'error_extra_maximum_threads_forum' => "I'm sorry, but your daily thread limit for this forum has been exceeded.",
     'error_extra_maximum_threads_group' => "I'm sorry, but your daily thread limit has been exceeded.",
-    'error_extra_maximum_threads_forum_note' => ' Please wait till tomorrow to post further or contact your administrator.<br /><br />',
+    'error_extra_maximum_threads_forum_note' => ' Please wait till tomorrow to post further or contact your administrator.<br />',
     'error_extra_maximum_threads_forum_description' => ' The maximum amount of threads you may make in this forum is {1} every {2} {3}.',
     'error_extra_maximum_threads_group_description' => ' The maximum amount of threads you may make is {1} every {2} {3}.',
     'error_extra_maximum_threads_draft_notice' => '<br />You may also save this thread as a draft to publish later.',
