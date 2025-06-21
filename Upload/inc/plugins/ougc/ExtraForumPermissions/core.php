@@ -106,6 +106,16 @@ const FIELDS_DATA = [
                 'max' => 255
             ]
         ],
+        'extra_post_flood_minutes' => [
+            'type' => 'TINYINT',
+            'unsigned' => true,
+            'default' => 0,
+            'form_type' => 'numeric',
+            'form_options' => [
+                'min' => 0,
+                'max' => 255
+            ]
+        ],
     ],
     'forums' => [
         'extra_maximum_threads' => [
@@ -216,6 +226,16 @@ const FIELDS_DATA = [
             ]
         ],
         'extra_maximum_threads' => [
+            'type' => 'TINYINT',
+            'unsigned' => true,
+            'default' => 0,
+            'form_type' => 'numeric',
+            'form_options' => [
+                'min' => 0,
+                'max' => 255
+            ]
+        ],
+        'extra_post_flood_minutes' => [
             'type' => 'TINYINT',
             'unsigned' => true,
             'default' => 0,

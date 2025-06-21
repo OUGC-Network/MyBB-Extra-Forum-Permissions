@@ -28,6 +28,8 @@ $l = [
     'extra_field_extra_maximum_attachments_desc' => 'The maximum number of attachments a user is allowed to upload per post. Set to 0 to use global setting.',
     'extra_field_extra_maximum_threads' => 'Maximum Threads',
     'extra_field_extra_maximum_threads_desc' => 'This is the total number of threads allowed per user per day. 0 for unlimited.',
+    'extra_field_extra_post_flood_minutes' => 'Post Flood Time',
+    'extra_field_extra_post_flood_minutes_desc' => 'Set the time (in minutes) users have to wait between posting, to be in effect; the global setting <code>Post Flood Checking</code> must be on. If <code>0</code> then the global setting <code>Post Flood Time</code> will be used.',
 
     'extra_forum_tab' => 'Extra Permissions',
     'extra_maximum_threads' => 'Maximum Threads <br /><small class="input">This is the total number of threads allowed per user. 0 to fallback to group and custom permissions. If not 0, will overwrite group and custom permissions.</small><br />',

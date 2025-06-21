@@ -76,7 +76,36 @@ function datahandler_post_validate_thread(PostDataHandler &$dataHandler): PostDa
 
 function datahandler_post_validate_post(PostDataHandler &$dataHandler): PostDataHandler
 {
+    if ($dataHandler->method !== 'update') {
+        datahandler_post_validate_thread11($dataHandler);
+    }
+
     return datahandler_post_validate_thread($dataHandler);
+}
+
+function datahandler_post_validate_thread11(PostDataHandler &$dataHandler): PostDataHandler
+{
+    global $mybb;
+
+    $thread_post_data = &$dataHandler->data;
+
+    $forum_permissions = forum_permissions($thread_post_data['fid'] ?? 0, $thread_post_data['uid'] ?? 0);
+
+    if (!empty($thread_post_data['savedraft']) || empty($mybb->settings['postfloodcheck']) || empty($forum_permissions['extra_post_flood_minutes'])) {
+        return $dataHandler;
+    }
+
+    $data_handler_errors = $dataHandler->get_errors();
+
+    if (isset($data_handler_errors['post_flooding'])) {
+        unset($data_handler_errors['post_flooding']);
+    }
+
+    $mybb->settings['postfloodsecs'] = $forum_permissions['extra_post_flood_minutes'] * 60;
+
+    $dataHandler->verify_post_flooding();
+
+    return $dataHandler;
 }
 
 function datahandler_post_validate_thread10(PostDataHandler &$dataHandler): PostDataHandler
