@@ -210,7 +210,11 @@ function parse_message_me_mycode(string &$message): string
     }
 
     foreach (REGULAR_EXPRESSIONS_URL as $regular_expression => $callback) {
-        $message = preg_replace_callback($regular_expression, "\\ExtraForumPermissions\\Core\\{$callback}", $message);
+        $message = preg_replace_callback(
+            $regular_expression,
+            "\\ExtraForumPermissions\\Core\\{$callback}",
+            $message
+        ) ?? '';
     }
 
     return $message;

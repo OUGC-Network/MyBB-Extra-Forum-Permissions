@@ -584,7 +584,7 @@ function extraforumperm_validatepost(&$datahandler)
     // the content of those tags
     $message = preg_replace("#\[(code|php)\](.*?)\[/\\1\](\r\n?|\n?)#si", '', $message);
 
-    $is_thread = $plugins->current_hook == 'datahandler_post_validate_thread';
+    $is_thread = $plugins->current_hook === 'datahandler_post_validate_thread';
 
     $is_post = !$is_thread;
 
